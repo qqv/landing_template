@@ -9,14 +9,24 @@ export default function HomePage() {
   const atomConfig = getAtomPaymentConfig()
 
   useEffect(() => {
-    // Load jQuery first
+    // Load jQuery first (using HTTPS to avoid mixed content errors)
     const jqueryScript = document.createElement('script')
-    jqueryScript.src = 'http://code.jquery.com/jquery-1.10.2.js'
+    jqueryScript.src = 'https://code.jquery.com/jquery-1.10.2.js'
     jqueryScript.onload = () => {
+      console.log('jQuery loaded successfully')
       // Load Atom script after jQuery is loaded
       const atomScript = document.createElement('script')
       atomScript.src = 'https://www.atom.com/scripts/pay-with-atom.js'
+      atomScript.onload = () => {
+        console.log('Atom payment script loaded successfully')
+      }
+      atomScript.onerror = () => {
+        console.error('Failed to load Atom payment script')
+      }
       document.head.appendChild(atomScript)
+    }
+    jqueryScript.onerror = () => {
+      console.error('Failed to load jQuery')
     }
     document.head.appendChild(jqueryScript)
 
@@ -36,7 +46,7 @@ export default function HomePage() {
         <p className="text-xl text-muted-foreground mb-6">{email}</p>
         
         <button 
-          className="pay-with-atom inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200"
+          className="pay-with-atom inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
           data-domain-name={atomConfig.domainName}
           data-domain-price={atomConfig.domainPrice}
           data-token={atomConfig.token}
