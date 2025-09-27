@@ -1,11 +1,12 @@
 'use client'
 
-import { getDomainName, getEmail } from '@/lib/config'
+import { getDomainName, getEmail, getAtomPaymentConfig } from '@/lib/config'
 import { useEffect } from 'react'
 
 export default function HomePage() {
   const domainName = getDomainName()
   const email = getEmail()
+  const atomConfig = getAtomPaymentConfig()
 
   useEffect(() => {
     // Load jQuery first
@@ -36,12 +37,12 @@ export default function HomePage() {
         
         <button 
           className="pay-with-atom inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200"
-          data-domain-name="now.ad"
-          data-domain-price="2888"
-          data-token="161f3b352da7fbce"
-          data-installments=""
-          data-down-payment=""
-          data-host-name="https://www.atom.com"
+          data-domain-name={atomConfig.domainName}
+          data-domain-price={atomConfig.domainPrice}
+          data-token={atomConfig.token}
+          data-installments={atomConfig.installments}
+          data-down-payment={atomConfig.downPayment}
+          data-host-name={atomConfig.hostName}
         >
           <span>Buy With</span>
           <img src="https://www.atom.com/assets/pay.png" alt="Atom Logo" className="h-6" />
