@@ -10,13 +10,16 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
+    let jqueryScript: HTMLScriptElement | null = null
+    let atomScript: HTMLScriptElement | null = null
+
     // Load jQuery first (using HTTPS to avoid mixed content errors)
-    const jqueryScript = document.createElement('script')
+    jqueryScript = document.createElement('script')
     jqueryScript.src = 'https://code.jquery.com/jquery-1.10.2.js'
     jqueryScript.onload = () => {
       console.log('jQuery loaded successfully')
       // Load Atom script after jQuery is loaded
-      const atomScript = document.createElement('script')
+      atomScript = document.createElement('script')
       atomScript.src = 'https://www.atom.com/scripts/pay-with-atom.js'
       atomScript.onload = () => {
         console.log('Atom payment script loaded successfully')
@@ -32,9 +35,22 @@ export default function HomePage() {
     document.head.appendChild(jqueryScript)
 
     return () => {
-      // Cleanup scripts when component unmounts
-      const scripts = document.querySelectorAll('script[src*="jquery"], script[src*="atom.com"]')
-      scripts.forEach(script => script.remove())
+      // Safely cleanup scripts when component unmounts
+      try {
+        if (jqueryScript && jqueryScript.parentNode) {
+          jqueryScript.parentNode.removeChild(jqueryScript)
+        }
+      } catch (error) {
+        console.warn('Failed to remove jQuery script:', error)
+      }
+
+      try {
+        if (atomScript && atomScript.parentNode) {
+          atomScript.parentNode.removeChild(atomScript)
+        }
+      } catch (error) {
+        console.warn('Failed to remove Atom script:', error)
+      }
     }
   }, [])
 
